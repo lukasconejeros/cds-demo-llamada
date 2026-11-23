@@ -129,7 +129,7 @@
   </section>
 </main>
 <script type="module">
-import { Conversation } from "https://esm.sh/@elevenlabs/client@1.38.0";
+import { Conversation } from "./elevenlabs-client.mjs";
 const AGENTE = "agent_9201m84ned4bepcsgcrq4pp8x942";
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
