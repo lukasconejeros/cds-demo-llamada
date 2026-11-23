@@ -4,34 +4,220 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>CDS Diagnóstico · Llamar a la asistente</title>
+<title>CDS Diagnóstico · Demo Waly (llamadas y WhatsApp)</title>
 <style>
-  html,body { overflow-x:hidden; } body { margin:0; font-family:"Segoe UI",system-ui,sans-serif; background:#f3f5f7; color:#1d2730; }
-  header { background:#1f262c; } header img { display:block; max-width:100%; height:auto; max-height:110px; }
-  main { max-width:620px; margin:auto; padding:28px 22px 160px; }
-  h1 { font-size:26px; margin:0 0 10px; color:#26323b; }
-  p { font-size:17px; line-height:1.5; color:#3c4955; }
-  .ej { background:#fff; border:1px solid #dde3e8; border-radius:12px; padding:14px 18px; margin:18px 0; }
-  .ej li { margin:6px 0; font-size:16px; }
-  .nota { font-size:14px; color:#7a8692; }
+  :root { --azul:#2f6f9a; --oscuro:#26323b; --gris:#f3f5f7; --borde:#dde3e8; --verde:#1f8a5b; --ambar:#b7791f; --wa:#075e54; --wa2:#25d366; }
+  * { box-sizing:border-box; }
+  html,body { overflow-x:hidden; }
+  body { margin:0; font-family:"Segoe UI",system-ui,sans-serif; background:var(--gris); color:#1d2730; }
+  header { background:#1f262c; display:flex; align-items:center; justify-content:space-between; }
+  header img { display:block; height:72px; max-width:60vw; object-fit:cover; object-position:left; }
+  .waly { color:#cfe6f5; font-size:14px; padding:0 22px; white-space:nowrap; }
+  .waly b { color:#fff; font-size:18px; }
+  .pestanas { display:none; background:var(--oscuro); }
+  .pestanas button { flex:1; background:none; color:#cfd8df; border:0; padding:12px 6px; font-size:15px; font-weight:600; }
+  .pestanas button.activa { color:#fff; border-bottom:3px solid #8fd3ff; }
+  main { display:grid; grid-template-columns: 380px 1fr; gap:24px; padding:22px 26px; max-width:1400px; margin:auto; }
+  /* ── Teléfono ── */
+  .telefono { background:#111; border-radius:34px; padding:12px; box-shadow:0 10px 30px rgba(0,0,0,.18); height:720px; display:flex; flex-direction:column; }
+  .modos { display:flex; gap:6px; padding:6px 6px 10px; }
+  .modos button { flex:1; border:0; border-radius:12px; padding:10px; font-size:15px; font-weight:700; cursor:pointer; background:#2a2f33; color:#cfd8df; }
+  .modos button.activo { background:#fff; color:#111; }
+  .pantalla { flex:1; border-radius:24px; overflow:hidden; background:#fff; display:flex; flex-direction:column; min-height:0; }
+  /* llamada */
+  .llamada { flex:1; display:flex; flex-direction:column; align-items:center; background:linear-gradient(#2b3a45,#1b2329); color:#fff; padding:28px 18px 22px; min-height:0; }
+  .avatar { width:92px; height:92px; border-radius:50%; background:#fff url("https://www.cdsdiagnostico.cl/images/header.jpg") 12% 50%/auto 260% no-repeat; border:3px solid #8fd3ff; }
+  .llamada h3 { margin:14px 0 2px; font-size:22px; }
+  .estado { font-size:15px; color:#9fb3c2; min-height:20px; }
+  .onda { display:flex; gap:5px; height:40px; align-items:center; margin:14px 0; }
+  .onda i { width:6px; height:8px; background:#8fd3ff; border-radius:3px; transition:height .15s; }
+  .hablando .onda i { animation:onda .7s infinite ease-in-out; }
+  .onda i:nth-child(2){animation-delay:.1s}.onda i:nth-child(3){animation-delay:.2s}.onda i:nth-child(4){animation-delay:.3s}.onda i:nth-child(5){animation-delay:.4s}
+  @keyframes onda { 50% { height:36px; } }
+  .subtitulos { flex:1; width:100%; overflow-y:auto; font-size:14px; line-height:1.45; padding:6px 4px; min-height:0; }
+  .subtitulos p { margin:6px 0; } .subtitulos .ia { color:#bfe6ff; } .subtitulos .yo { color:#fff; text-align:right; }
+  .boton-llamar { width:72px; height:72px; border-radius:50%; border:0; font-size:30px; cursor:pointer; background:var(--wa2); color:#fff; margin-top:10px; }
+  .boton-llamar.cortar { background:#e5484d; transform:rotate(135deg); }
+  /* whatsapp */
+  .wa { flex:1; display:none; flex-direction:column; min-height:0; }
+  .wa-top { background:var(--wa); color:#fff; padding:12px 14px; display:flex; align-items:center; gap:10px; }
+  .wa-top .avatar { width:38px; height:38px; border-width:2px; }
+  .wa-top b { display:block; font-size:16px; } .wa-top span { font-size:12px; color:#cfe9e4; }
+  .wa-chat { flex:1; overflow-y:auto; padding:12px 10px; background:#efeae2; min-height:0; }
+  .burbuja { max-width:82%; padding:7px 10px 6px; border-radius:9px; margin:5px 0; font-size:14.5px; line-height:1.38; white-space:pre-wrap; box-shadow:0 1px .5px rgba(0,0,0,.13); }
+  .burbuja.ia { background:#fff; border-top-left-radius:0; }
+  .burbuja.yo { background:#d9fdd3; margin-left:auto; border-top-right-radius:0; }
+  .escribiendo { font-size:13px; color:#667781; font-style:italic; padding:2px 6px; min-height:18px; }
+  .wa-input { display:flex; gap:8px; padding:8px; background:#f0f2f5; }
+  .wa-input input { flex:1; border:0; border-radius:20px; padding:11px 14px; font-size:15px; outline:none; }
+  .wa-input button { width:44px; height:44px; border-radius:50%; border:0; background:var(--wa); color:#fff; font-size:18px; cursor:pointer; }
+  /* ── Panel ── */
+  .panel h2 { font-size:18px; margin:0 0 12px; color:var(--oscuro); }
+  .titulo-panel { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+  .titulo-panel h1 { font-size:22px; margin:0; color:var(--oscuro); }
+  .titulo-panel button { background:none; border:1px solid var(--borde); color:#5b6875; border-radius:8px; padding:6px 10px; cursor:pointer; font-size:13px; }
+  .numeros { display:grid; grid-template-columns: repeat(3,1fr); gap:12px; margin-bottom:22px; }
+  .num { background:#fff; border:1px solid var(--borde); border-radius:12px; padding:14px 16px; }
+  .num .n { font-size:38px; font-weight:700; color:var(--azul); line-height:1; }
+  .num .t { font-size:13px; color:#5b6875; margin-top:6px; }
+  .tarjeta { background:#fff; border:1px solid var(--borde); border-left:6px solid var(--ambar); border-radius:12px; padding:14px 16px; margin-bottom:12px; animation:entra .5s ease; }
+  @keyframes entra { from { opacity:0; transform:translateY(-8px); } }
+  .tarjeta.hecha { border-left-color:var(--verde); opacity:.65; }
+  .top { display:flex; justify-content:space-between; align-items:start; gap:12px; }
+  .nombre { font-size:19px; font-weight:700; } .tel { font-size:20px; font-weight:700; color:var(--azul); white-space:nowrap; }
+  .meta { font-size:13px; color:#7a8692; }
+  .chips { display:flex; flex-wrap:wrap; gap:8px; margin:10px 0 4px; }
+  .chip { background:var(--gris); border:1px solid var(--borde); border-radius:20px; padding:3px 11px; font-size:13.5px; }
+  .estado-t { font-size:13px; font-weight:700; color:var(--ambar); } .hecha .estado-t { color:var(--verde); }
+  .acciones { display:flex; gap:16px; align-items:center; margin-top:8px; }
+  .b-ok { background:var(--verde); color:#fff; border:0; border-radius:8px; padding:8px 13px; font-weight:600; cursor:pointer; }
+  .b-ver { background:none; border:0; color:var(--azul); font-weight:600; cursor:pointer; padding:4px 0; }
+  .conv { background:#fff; border:1px solid var(--borde); border-radius:10px; padding:10px 14px; margin-bottom:8px; font-size:14px; }
+  .transcripcion { display:none; margin-top:8px; border-top:1px dashed var(--borde); padding-top:6px; font-size:13.5px; }
+  .transcripcion p { margin:4px 0; } .transcripcion .ia { color:var(--azul); }
+  .vacio { color:#7a8692; font-size:14px; padding:8px 0 14px; }
+  .canal { font-size:12px; font-weight:700; border-radius:6px; padding:2px 7px; margin-left:8px; vertical-align:middle; }
+  .canal.llamada { background:#e6f1f8; color:var(--azul); } .canal.whatsapp { background:#dcf8e6; color:#0b7a3e; }
+  .nota { font-size:12.5px; color:#7a8692; margin-top:18px; }
+  @media (max-width: 900px) {
+    header img { height:56px; } .waly { font-size:12px; padding:0 12px; } .waly b { font-size:15px; }
+    .pestanas { display:flex; }
+    main { grid-template-columns:1fr; padding:12px; }
+    .telefono { height:calc(100vh - 150px); min-height:520px; border-radius:24px; padding:8px; }
+    body[data-vista="panel"] .col-tel { display:none; } body[data-vista="telefono"] .panel { display:none; }
+    .numeros .n { font-size:28px; }
+  }
 </style>
 </head>
-<body>
-<header><img src="https://www.cdsdiagnostico.cl/images/header.jpg" alt="CDS Diagnóstico"></header>
+<body data-vista="telefono">
+<header><img src="https://www.cdsdiagnostico.cl/images/header.jpg" alt="CDS Diagnóstico"><div class="waly">funciona con <b>Waly</b></div></header>
+<div class="pestanas"><button id="p-tel" class="activa" onclick="vista('telefono')">📱 Paciente</button><button id="p-panel" onclick="vista('panel')">🗂️ Panel del equipo <span id="badge"></span></button></div>
 <main>
-  <h1>Hable con la asistente de CDS</h1>
-  <p>Apriete <b>Llamar</b> (abajo) y hable como si llamara al call center. El navegador le va a pedir permiso para usar el micrófono.</p>
-  <div class="ej"><b>Pruebe preguntando, por ejemplo:</b>
-    <ul>
-      <li>¿Hacen resonancia de rodilla? ¿Cuánto vale por Fonasa?</li>
-      <li>¿Tengo que ir en ayunas para el perfil lipídico?</li>
-      <li>¿Atienden el sábado en Moneda?</li>
-      <li>Quiero pedir hora para una mamografía.</li>
-    </ul>
-  </div>
-  <p class="nota">Demostración preparada para CDS Diagnóstico. Precios tomados de la lista pública de cdsdiagnostico.cl el 23-11-2026.</p>
+  <section class="col-tel">
+    <div class="telefono">
+      <div class="modos"><button id="m-llamada" class="activo" onclick="modo('llamada')">📞 Llamar</button><button id="m-wa" onclick="modo('wa')">💬 WhatsApp</button></div>
+      <div class="pantalla">
+        <div class="llamada" id="llamada">
+          <div class="avatar"></div>
+          <h3>CDS Diagnóstico</h3>
+          <div class="estado" id="estado-llamada">Toque el botón verde para llamar</div>
+          <div class="onda"><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="subtitulos" id="subtitulos"></div>
+          <button class="boton-llamar" id="boton-llamar" onclick="alternarLlamada()">📞</button>
+        </div>
+        <div class="wa" id="wa">
+          <div class="wa-top"><div class="avatar"></div><div><b>CDS Diagnóstico</b><span id="wa-estado">en línea</span></div></div>
+          <div class="wa-chat" id="wa-chat"></div>
+          <div class="escribiendo" id="escribiendo"></div>
+          <form class="wa-input" onsubmit="enviarWa(event)"><input id="wa-texto" placeholder="Escriba un mensaje" autocomplete="off"><button>➤</button></form>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="panel">
+    <div class="titulo-panel"><h1>Panel del equipo</h1><button onclick="reiniciar()">Reiniciar demo</button></div>
+    <div class="numeros">
+      <div class="num"><div class="n" id="n-total">0</div><div class="t">conversaciones atendidas por la IA</div></div>
+      <div class="num"><div class="n" id="n-resueltas">0</div><div class="t">resueltas sin que nadie del equipo interviniera</div></div>
+      <div class="num"><div class="n" id="n-llamar">0</div><div class="t">pacientes por llamar para agendar</div></div>
+    </div>
+    <h2>📋 Llamar para agendar</h2>
+    <div id="solicitudes"></div>
+    <h2 style="margin-top:22px">💬 Todas las conversaciones</h2>
+    <div id="conversaciones"></div>
+    <p class="nota">Demostración preparada para CDS Diagnóstico. La IA usa la lista de precios publicada en cdsdiagnostico.cl (23-11-2026). No se conecta al sistema de agenda de CDS: cada paciente que pide hora queda aquí para que el equipo lo llame.</p>
+  </section>
 </main>
-<elevenlabs-convai agent-id="agent_9201m84ned4bepcsgcrq4pp8x942"></elevenlabs-convai>
-<script src="https://unpkg.com/@elevenlabs/convai-widget-embed" async type="text/javascript"></script>
+<script type="module">
+import { Conversation } from "https://esm.sh/@elevenlabs/client@1.38.0";
+const AGENTE = "agent_9201m84ned4bepcsgcrq4pp8x942";
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const CLAVE = "cds-demo-v1";
+let datos = JSON.parse(localStorage.getItem(CLAVE) || "null") || { convs: [] };
+const guardar = () => localStorage.setItem(CLAVE, JSON.stringify(datos));
+const abiertos = new Set();
+
+function nuevaConv(canal) { const c = { id: Date.now() + "-" + canal, canal, inicio: Date.now(), turnos: [], solicitud: null, hecha: false }; datos.convs.unshift(c); guardar(); pintar(); return c; }
+function agregarTurno(c, quien, texto) { if (!texto) return; c.turnos.push({ q: quien, t: texto }); guardar(); pintar(); }
+const herramientas = (c) => ({ registrar_solicitud: (p) => { c.solicitud = p; guardar(); pintar(); avisarPanel(); return "Solicitud registrada en el panel del equipo."; } });
+
+// ── Llamada de voz ──
+let llamada = null, convLlamada = null;
+window.alternarLlamada = async () => {
+  if (llamada) { await llamada.endSession(); return; }
+  convLlamada = nuevaConv("llamada"); $("subtitulos").innerHTML = "";
+  $("estado-llamada").textContent = "Conectando…";
+  try {
+    llamada = await Conversation.startSession({
+      agentId: AGENTE, connectionType: "webrtc", dynamicVariables: { canal: "llamada" },
+      clientTools: herramientas(convLlamada),
+      onConnect: () => { $("estado-llamada").textContent = "En llamada"; $("boton-llamar").classList.add("cortar"); },
+      onDisconnect: () => { llamada = null; $("estado-llamada").textContent = "Llamada terminada"; $("boton-llamar").classList.remove("cortar"); $("llamada").classList.remove("hablando"); },
+      onModeChange: ({ mode }) => { $("llamada").classList.toggle("hablando", mode === "speaking"); $("estado-llamada").textContent = mode === "speaking" ? "Hablando…" : "Escuchando…"; },
+      onMessage: ({ source, message }) => {
+        agregarTurno(convLlamada, source === "ai" ? "ia" : "yo", message);
+        const p = document.createElement("p"); p.className = source === "ai" ? "ia" : "yo"; p.textContent = message; $("subtitulos").appendChild(p); $("subtitulos").scrollTop = 1e9;
+      },
+      onError: (e) => { $("estado-llamada").textContent = "No se pudo conectar: " + e; },
+    });
+  } catch (e) { $("estado-llamada").textContent = "Necesito permiso para usar el micrófono"; llamada = null; }
+};
+
+// ── WhatsApp (texto) ──
+let wa = null, convWa = null, colaWa = [];
+function burbuja(quien, texto) { const d = document.createElement("div"); d.className = "burbuja " + quien; d.textContent = texto; $("wa-chat").appendChild(d); $("wa-chat").scrollTop = 1e9; }
+async function abrirWa() {
+  if (wa) return;
+  convWa = nuevaConv("whatsapp"); $("wa-estado").textContent = "conectando…";
+  wa = await Conversation.startSession({
+    agentId: AGENTE, textOnly: true, dynamicVariables: { canal: "whatsapp" }, clientTools: herramientas(convWa),
+    onConnect: () => { $("wa-estado").textContent = "en línea"; },
+    onDisconnect: () => { wa = null; $("wa-estado").textContent = "en línea"; },
+    onMessage: ({ source, message }) => {
+      if (source === "ai") { $("escribiendo").textContent = ""; burbuja("ia", message); agregarTurno(convWa, "ia", message); }
+    },
+  });
+}
+window.enviarWa = async (ev) => {
+  ev.preventDefault(); const t = $("wa-texto").value.trim(); if (!t) return; $("wa-texto").value = "";
+  burbuja("yo", t);
+  if (!wa) { try { await abrirWa(); await new Promise(r => setTimeout(r, 1200)); } catch (e) { burbuja("ia", "No se pudo conectar. Intente de nuevo."); return; } }
+  agregarTurno(convWa, "yo", t); $("escribiendo").textContent = "CDS Diagnóstico está escribiendo…";
+  wa.sendUserMessage(t);
+};
+
+// ── Vistas ──
+window.modo = (m) => { if (m === "wa" && !wa) abrirWa().catch(() => {}); $("llamada").style.display = m === "llamada" ? "flex" : "none"; $("wa").style.display = m === "wa" ? "flex" : "none"; $("m-llamada").classList.toggle("activo", m === "llamada"); $("m-wa").classList.toggle("activo", m === "wa"); };
+window.vista = (v) => { document.body.dataset.vista = v; $("p-tel").classList.toggle("activa", v === "telefono"); $("p-panel").classList.toggle("activa", v === "panel"); if (v === "panel") $("badge").textContent = ""; };
+function avisarPanel() { if (document.body.dataset.vista === "telefono" && getComputedStyle(document.querySelector(".pestanas")).display !== "none") $("badge").textContent = "🔴"; }
+window.reiniciar = () => { if (!confirm("¿Borrar todas las conversaciones de esta demo?")) return; datos = { convs: [] }; guardar(); $("wa-chat").innerHTML = ""; $("subtitulos").innerHTML = ""; pintar(); };
+window.marcar = (id) => { const c = datos.convs.find(x => x.id === id); if (c) { c.hecha = true; guardar(); pintar(); } };
+window.verT = (id) => { abiertos.has(id) ? abiertos.delete(id) : abiertos.add(id); pintar(); };
+
+// ── Panel ──
+const hora = (ms) => new Date(ms).toLocaleString("es-CL", { weekday: "short", hour: "2-digit", minute: "2-digit" });
+const telBonito = (t) => { const d = String(t || "").replace(/\D/g, "").replace(/^56/, ""); return d.length === 9 ? `${d[0]} ${d.slice(1,5)} ${d.slice(5)}` : (t || ""); };
+const etiqueta = (c) => `<span class="canal ${c.canal}">${c.canal === "llamada" ? "📞 Llamada" : "💬 WhatsApp"}</span>`;
+const trans = (c) => `<div class="transcripcion" style="display:${abiertos.has(c.id) ? "block" : "none"}">` + c.turnos.map(t => `<p class="${t.q}"><b>${t.q === "ia" ? "IA" : "Paciente"}:</b> ${esc(t.t)}</p>`).join("") + `</div>`;
+function pintar() {
+  const cs = datos.convs.filter(c => c.turnos.some(t => t.q === "yo"));
+  const sol = cs.filter(c => c.solicitud);
+  $("n-total").textContent = cs.length;
+  $("n-resueltas").textContent = cs.filter(c => !c.solicitud || c.solicitud.tipo === "agendar").length;
+  $("n-llamar").textContent = sol.filter(c => !c.hecha).length;
+  $("solicitudes").innerHTML = sol.length ? sol.map(c => { const s = c.solicitud;
+    const chips = [s.examen, s.sede, s.dia_preferido, s.prevision].filter(Boolean).map(x => `<span class="chip">${esc(x)}</span>`).join("");
+    return `<div class="tarjeta ${c.hecha ? "hecha" : ""}"><div class="top"><div><div class="nombre">${esc(s.nombre || "Paciente")}${etiqueta(c)}</div><div class="meta">${hora(c.inicio)}</div></div>
+      <div style="text-align:right"><div class="tel">${esc(telBonito(s.telefono))}</div><div class="estado-t">${c.hecha ? "Agendado ✓" : (s.tipo === "llamar" ? "Quiere que lo llamen" : "Esperando llamada")}</div></div></div>
+      <div class="chips">${chips}</div><div class="meta" style="color:#46525e">${esc(s.motivo || "")}</div>
+      <div class="acciones">${c.hecha ? "" : `<button class="b-ok" onclick="marcar('${c.id}')">Ya lo agendé</button>`}<button class="b-ver" onclick="verT('${c.id}')">Ver la conversación</button></div>${trans(c)}</div>`; }).join("")
+    : `<div class="vacio">Cuando un paciente pida hora por teléfono o WhatsApp, aparece aquí con sus datos.</div>`;
+  $("conversaciones").innerHTML = cs.length ? cs.map(c => `<div class="conv"><b>${hora(c.inicio)}</b>${etiqueta(c)} · ${esc((c.turnos.find(t => t.q === "yo") || {}).t || "…")}
+      <div><button class="b-ver" onclick="verT('${c.id}')">Ver la conversación</button></div>${trans(c)}</div>`).join("")
+    : `<div class="vacio">Todavía no hay conversaciones. Pruebe llamando o escribiendo en el teléfono.</div>`;
+}
+pintar();
+</script>
 </body>
 </html>
