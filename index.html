@@ -112,7 +112,7 @@
         <div class="llamada" id="llamada">
           <div class="avatar"></div>
           <h3>CDS Diagnóstico</h3>
-          <div class="voces"><button id="v-cristina" class="activo" onclick="elegirVoz('cristina')">Voz Cristina</button><button id="v-marco" onclick="elegirVoz('marco')">Voz Marco</button></div>
+          <div class="voces"><button id="v-cristina" class="activo" onclick="elegirVoz('cristina')">Voz Cristina</button><button id="v-marco" onclick="elegirVoz('marco')">Voz Marco</button><button id="v-marcela" onclick="elegirVoz('marcela')">Marcela ✨</button></div>
           <div class="estado" id="estado-llamada">Toque el botón verde para llamar</div>
           <div class="onda"><i></i><i></i><i></i><i></i><i></i></div>
           <div class="subtitulos" id="subtitulos"></div>
@@ -157,6 +157,7 @@
 <script type="module">
 import { Conversation } from "./elevenlabs-client.mjs";
 const AGENTE = "agent_9201m84ned4bepcsgcrq4pp8x942";
+const AGENTE_HUMANA = "agent_6001m8850pj1etwatmgkjzd43wpt"; // Marcela con ajustes para sonar más humana
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const CLAVE = "cds-demo-v1";
@@ -169,13 +170,13 @@ function agregarTurno(c, quien, texto) { if (!texto) return; c.turnos.push({ q: 
 const herramientas = (c) => ({ registrar_solicitud: (p) => { c.solicitud = p; guardar(); pintar(); avisarPanel(); return "Solicitud registrada en el panel del equipo."; } });
 
 // ── Voces ──
-const VOCES = { cristina: { id: "CaJslL1xziwefCeTNzHv", genero: "mujer" }, marco: { id: "OFrdGXwCzoE56a9sp1fk", genero: "hombre" } };
+const VOCES = { cristina: { id: "CaJslL1xziwefCeTNzHv", genero: "mujer" }, marco: { id: "OFrdGXwCzoE56a9sp1fk", genero: "hombre" }, marcela: { id: "PeRxbnxvwcESkQcDM8Fi", genero: "mujer", agente: AGENTE_HUMANA } };
 let voz = "cristina";
 // Por defecto el audio va por websocket (TCP): no se pierden pedazos de palabras si la red tiembla
 // (24-11: con WebRTC se perdió «particular» al final de una frase, aunque la grabación del servidor lo tenía).
 // ?conexion=webrtc vuelve a la conexión anterior.
 const CONEXION = new URLSearchParams(location.search).get("conexion") === "webrtc" ? "webrtc" : "websocket";
-window.elegirVoz = (v) => { if (llamada || conectando) return; voz = v; $("v-cristina").classList.toggle("activo", v === "cristina"); $("v-marco").classList.toggle("activo", v === "marco"); };
+window.elegirVoz = (v) => { if (llamada || conectando) return; voz = v; $("v-cristina").classList.toggle("activo", v === "cristina"); $("v-marco").classList.toggle("activo", v === "marco"); $("v-marcela").classList.toggle("activo", v === "marcela"); };
 
 // ── Llamada de voz ──
 let llamada = null, convLlamada = null, conectando = false;
@@ -191,7 +192,7 @@ window.alternarLlamada = async () => {
     convLlamada = nuevaConv("llamada"); $("subtitulos").innerHTML = "";
     $("estado-llamada").textContent = "Conectando… si le pide permiso, permita el micrófono";
     const sesion = await Conversation.startSession({
-      agentId: AGENTE, connectionType: CONEXION, dynamicVariables: { canal: "llamada", genero: VOCES[voz].genero },
+      agentId: VOCES[voz].agente || AGENTE, connectionType: CONEXION, dynamicVariables: { canal: "llamada", genero: VOCES[voz].genero },
       overrides: { tts: { voiceId: VOCES[voz].id } },
       clientTools: herramientas(convLlamada),
       onConnect: () => { $("estado-llamada").textContent = "En llamada"; $("boton-llamar").classList.add("cortar"); },
