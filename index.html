@@ -276,6 +276,7 @@ function pintar() {
     : `<div class="vacio">Todavía no hay conversaciones. Pruebe llamando o escribiendo en el teléfono.</div>`;
 }
 pintar();
+if (new URLSearchParams(location.search).get("abrir") === "whatsapp") modo("wa");
 </script>
 </body>
 </html>
