@@ -17,7 +17,7 @@
   .pestanas { display:none; background:var(--oscuro); }
   .pestanas button { flex:1; background:none; color:#cfd8df; border:0; padding:12px 6px; font-size:15px; font-weight:600; }
   .pestanas button.activa { color:#fff; border-bottom:3px solid #8fd3ff; }
-  main { display:grid; grid-template-columns: 380px 1fr 340px; gap:22px; padding:22px 26px; max-width:1560px; margin:auto; align-items:start; }
+  main { display:grid; grid-template-columns: 380px minmax(0,720px); justify-content:center; gap:28px; padding:26px; max-width:1200px; margin:auto; align-items:start; }
   /* ── Teléfono ── */
   .telefono { background:#111; border-radius:34px; padding:12px; box-shadow:0 10px 30px rgba(0,0,0,.18); height:720px; display:flex; flex-direction:column; }
   .modos { display:flex; gap:6px; padding:6px 6px 10px; }
@@ -81,9 +81,9 @@
   .canal.c-llamada { background:#e6f1f8; color:var(--azul); } .canal.whatsapp { background:#dcf8e6; color:#0b7a3e; }
   .nota { font-size:12.5px; color:#7a8692; margin-top:18px; }
   /* ── Lo que sabe ── */
-  .saber { background:linear-gradient(160deg,#16324a,#1f4e6e 60%,#23697f); color:#fff; border-radius:20px; padding:20px 18px; box-shadow:0 10px 30px rgba(22,50,74,.25); }
-  .saber h2 { margin:0; font-size:19px; } .saber .sub { font-size:12.5px; color:#b9d6ea; margin:4px 0 14px; }
-  .stats { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-bottom:14px; }
+  .saber { min-height:720px; background:linear-gradient(160deg,#16324a,#1f4e6e 60%,#23697f); color:#fff; border-radius:20px; padding:20px 18px; box-shadow:0 10px 30px rgba(22,50,74,.25); }
+  .saber h2 { margin:0; font-size:24px; } .sedes { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; } .reiniciar { margin-top:16px; background:none; border:1px solid rgba(255,255,255,.35); color:#cfe6f5; border-radius:8px; padding:6px 12px; cursor:pointer; font-family:inherit; } .saber .sub { font-size:12.5px; color:#b9d6ea; margin:4px 0 14px; }
+  .stats { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:14px; }
   .stat { background:rgba(255,255,255,.1); border-radius:12px; padding:10px 12px; } .stat b { display:block; font-size:28px; line-height:1.05; color:#8fe3ff; } .stat span { font-size:12.5px; color:#dbeaf5; }
   .saber h4 { margin:14px 0 6px; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:#8fe3ff; }
   .sede { background:rgba(255,255,255,.08); border-radius:10px; padding:8px 11px; margin-bottom:6px; font-size:13px; line-height:1.35; } .sede b { font-size:14px; }
@@ -91,20 +91,19 @@
   .pruebe { display:flex; flex-direction:column; gap:6px; } .pruebe button { font-family:inherit; text-align:left; background:#fff; color:#16324a; border:0; border-radius:10px; padding:8px 11px; font-size:13.5px; font-weight:600; cursor:pointer; } .pruebe button:hover { background:#e3f6ff; }
   .boton-llamar:disabled { background:#5b6875; cursor:wait; animation:late 1s infinite; } @keyframes late { 50% { transform:scale(.94); } }
   .voces button:disabled { opacity:.45; cursor:not-allowed; }
-  @media (max-width: 1250px) { main { grid-template-columns: 380px 1fr; } .saber { grid-column: 1 / -1; } }
   @media (max-width: 900px) {
     header img { height:56px; } .waly { font-size:12px; padding:0 12px; } .waly b { font-size:15px; }
     .pestanas { display:flex; }
     main { grid-template-columns:1fr; padding:12px; }
     .telefono { height:calc(100vh - 150px); min-height:520px; border-radius:24px; padding:8px; }
     body[data-vista="panel"] .col-tel { display:none; } body[data-vista="telefono"] .panel, body[data-vista="telefono"] .saber { display:none; }
-    .numeros .n { font-size:28px; }
+    .numeros .n { font-size:28px; } .stats { grid-template-columns:repeat(2,1fr); } .sedes { grid-template-columns:1fr; } .saber { min-height:0; }
   }
 </style>
 </head>
 <body data-vista="telefono">
 <header><img src="https://www.cdsdiagnostico.cl/images/header.jpg" alt="CDS Diagnóstico"><div class="waly">funciona con <b>Waly</b></div></header>
-<div class="pestanas"><button id="p-tel" class="activa" onclick="vista('telefono')">📱 Paciente</button><button id="p-panel" onclick="vista('panel')">🗂️ Panel del equipo <span id="badge"></span></button></div>
+<div class="pestanas"><button id="p-tel" class="activa" onclick="vista('telefono')">📱 Paciente</button><button id="p-panel" onclick="vista('panel')">🧠 Lo que sabe la IA <span id="badge"></span></button></div>
 <main>
   <section class="col-tel">
     <div class="telefono">
@@ -128,19 +127,6 @@
       </div>
     </div>
   </section>
-  <section class="panel">
-    <div class="titulo-panel"><h1>Panel del equipo</h1><button onclick="reiniciar()">Reiniciar demo</button></div>
-    <div class="numeros">
-      <div class="num"><div class="n" id="n-total">0</div><div class="t">conversaciones atendidas por la IA</div></div>
-      <div class="num"><div class="n" id="n-resueltas">0</div><div class="t">resueltas sin que nadie del equipo interviniera</div></div>
-      <div class="num"><div class="n" id="n-llamar">0</div><div class="t">pacientes por llamar para agendar</div></div>
-    </div>
-    <h2>📋 Llamar para agendar</h2>
-    <div id="solicitudes"></div>
-    <h2 style="margin-top:22px">💬 Todas las conversaciones</h2>
-    <div id="conversaciones"></div>
-    <p class="nota">Demostración preparada para CDS Diagnóstico. La IA usa la lista de precios publicada en cdsdiagnostico.cl (23-11-2026). No se conecta al sistema de agenda de CDS: cada paciente que pide hora queda aquí para que el equipo lo llame.</p>
-  </section>
   <aside class="saber">
     <h2>🧠 Lo que la IA ya sabe de CDS</h2>
     <p class="sub">Sacado de cdsdiagnostico.cl el 23 de noviembre. Contesta solo con esto: lo que no sabe, se lo pasa a su equipo.</p>
@@ -151,9 +137,11 @@
       <div class="stat"><b>24/7</b><span>contesta de noche, fines de semana y feriados</span></div>
     </div>
     <h4>Sus sedes</h4>
+    <div class="sedes">
     <div class="sede"><b>Moneda 1040</b> · todos los exámenes<br>L-V 7:30 a 17:00 · sáb 7:30 a 12:00. Laboratorio, rayos, electro y densitometría por orden de llegada.</div>
     <div class="sede"><b>Mall Arauco Estación</b> · local D057<br>Laboratorio, electrocardiograma, Holter y ecografías. 7:30 a 17:00.</div>
     <div class="sede"><b>Paseo Phillips 16</b> · piso 6<br>Toma de muestras.</div>
+    </div>
     <h4>Siempre le recuerda al paciente</h4>
     <ul><li>Traer la orden médica y el carnet.</li><li>La preparación de su examen.</li><li>Que los resultados se retiran en Moneda, piso 14.</li></ul>
     <h4>Pruebe preguntándole</h4>
@@ -163,6 +151,7 @@
       <button onclick="probar(this)">¿En el Mall Arauco hacen ecografías?</button>
       <button onclick="probar(this)">Quiero hora para una ecografía abdominal</button>
     </div>
+    <button class="reiniciar" onclick="reiniciar()">Reiniciar demo</button>
   </aside>
 </main>
 <script type="module">
@@ -258,7 +247,7 @@ window.probar = (b) => { const t = b.textContent; if (llamada || conectando) ret
 // ── Vistas ──
 window.modo = (m) => { if (m === "wa" && !wa) abrirWa().catch(() => {}); $("llamada").style.display = m === "llamada" ? "flex" : "none"; $("wa").style.display = m === "wa" ? "flex" : "none"; $("m-llamada").classList.toggle("activo", m === "llamada"); $("m-wa").classList.toggle("activo", m === "wa"); };
 window.vista = (v) => { document.body.dataset.vista = v; $("p-tel").classList.toggle("activa", v === "telefono"); $("p-panel").classList.toggle("activa", v === "panel"); if (v === "panel") $("badge").textContent = ""; };
-function avisarPanel() { if (document.body.dataset.vista === "telefono" && getComputedStyle(document.querySelector(".pestanas")).display !== "none") $("badge").textContent = "🔴"; }
+function avisarPanel() { return; if (document.body.dataset.vista === "telefono" && getComputedStyle(document.querySelector(".pestanas")).display !== "none") $("badge").textContent = "🔴"; }
 window.reiniciar = () => { if (!confirm("¿Borrar todas las conversaciones de esta demo?")) return; datos = { convs: [] }; guardar(); $("wa-chat").innerHTML = ""; $("subtitulos").innerHTML = ""; pintar(); };
 window.marcar = (id) => { const c = datos.convs.find(x => x.id === id); if (c) { c.hecha = true; guardar(); pintar(); } };
 window.verT = (id) => { abiertos.has(id) ? abiertos.delete(id) : abiertos.add(id); pintar(); };
@@ -269,6 +258,7 @@ const telBonito = (t) => { const d = String(t || "").replace(/\D/g, "").replace(
 const etiqueta = (c) => `<span class="canal ${c.canal === "llamada" ? "c-llamada" : c.canal}">${c.canal === "llamada" ? "📞 Llamada" : "💬 WhatsApp"}</span>`;
 const trans = (c) => `<div class="transcripcion" style="display:${abiertos.has(c.id) ? "block" : "none"}">` + c.turnos.map(t => `<p class="${t.q}"><b>${t.q === "ia" ? "IA" : "Paciente"}:</b> ${esc(t.t)}</p>`).join("") + `</div>`;
 function pintar() {
+  if (!$("n-total")) return;   // el panel del equipo vive en la aplicación, no en esta demo
   const cs = datos.convs.filter(c => c.turnos.some(t => t.q === "yo"));
   const sol = cs.filter(c => c.solicitud);
   $("n-total").textContent = cs.length;
