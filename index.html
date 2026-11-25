@@ -17,7 +17,7 @@
   .pestanas { display:none; background:var(--oscuro); }
   .pestanas button { flex:1; background:none; color:#cfd8df; border:0; padding:12px 6px; font-size:15px; font-weight:600; }
   .pestanas button.activa { color:#fff; border-bottom:3px solid #8fd3ff; }
-  main { display:grid; grid-template-columns: 380px 1fr; gap:24px; padding:22px 26px; max-width:1400px; margin:auto; }
+  main { display:grid; grid-template-columns: 380px 1fr 340px; gap:22px; padding:22px 26px; max-width:1560px; margin:auto; align-items:start; }
   /* ── Teléfono ── */
   .telefono { background:#111; border-radius:34px; padding:12px; box-shadow:0 10px 30px rgba(0,0,0,.18); height:720px; display:flex; flex-direction:column; }
   .modos { display:flex; gap:6px; padding:6px 6px 10px; }
@@ -78,14 +78,26 @@
   .transcripcion p { margin:4px 0; } .transcripcion .ia { color:var(--azul); }
   .vacio { color:#7a8692; font-size:14px; padding:8px 0 14px; }
   .canal { font-size:12px; font-weight:700; border-radius:6px; padding:2px 7px; margin-left:8px; vertical-align:middle; }
-  .canal.llamada { background:#e6f1f8; color:var(--azul); } .canal.whatsapp { background:#dcf8e6; color:#0b7a3e; }
+  .canal.c-llamada { background:#e6f1f8; color:var(--azul); } .canal.whatsapp { background:#dcf8e6; color:#0b7a3e; }
   .nota { font-size:12.5px; color:#7a8692; margin-top:18px; }
+  /* ── Lo que sabe ── */
+  .saber { background:linear-gradient(160deg,#16324a,#1f4e6e 60%,#23697f); color:#fff; border-radius:20px; padding:20px 18px; box-shadow:0 10px 30px rgba(22,50,74,.25); }
+  .saber h2 { margin:0; font-size:19px; } .saber .sub { font-size:12.5px; color:#b9d6ea; margin:4px 0 14px; }
+  .stats { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-bottom:14px; }
+  .stat { background:rgba(255,255,255,.1); border-radius:12px; padding:10px 12px; } .stat b { display:block; font-size:28px; line-height:1.05; color:#8fe3ff; } .stat span { font-size:12.5px; color:#dbeaf5; }
+  .saber h4 { margin:14px 0 6px; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:#8fe3ff; }
+  .sede { background:rgba(255,255,255,.08); border-radius:10px; padding:8px 11px; margin-bottom:6px; font-size:13px; line-height:1.35; } .sede b { font-size:14px; }
+  .saber ul { margin:0; padding-left:18px; font-size:13px; line-height:1.45; color:#e6f1f8; } .saber li { margin:3px 0; }
+  .pruebe { display:flex; flex-direction:column; gap:6px; } .pruebe button { font-family:inherit; text-align:left; background:#fff; color:#16324a; border:0; border-radius:10px; padding:8px 11px; font-size:13.5px; font-weight:600; cursor:pointer; } .pruebe button:hover { background:#e3f6ff; }
+  .boton-llamar:disabled { background:#5b6875; cursor:wait; animation:late 1s infinite; } @keyframes late { 50% { transform:scale(.94); } }
+  .voces button:disabled { opacity:.45; cursor:not-allowed; }
+  @media (max-width: 1250px) { main { grid-template-columns: 380px 1fr; } .saber { grid-column: 1 / -1; } }
   @media (max-width: 900px) {
     header img { height:56px; } .waly { font-size:12px; padding:0 12px; } .waly b { font-size:15px; }
     .pestanas { display:flex; }
     main { grid-template-columns:1fr; padding:12px; }
     .telefono { height:calc(100vh - 150px); min-height:520px; border-radius:24px; padding:8px; }
-    body[data-vista="panel"] .col-tel { display:none; } body[data-vista="telefono"] .panel { display:none; }
+    body[data-vista="panel"] .col-tel { display:none; } body[data-vista="telefono"] .panel, body[data-vista="telefono"] .saber { display:none; }
     .numeros .n { font-size:28px; }
   }
 </style>
@@ -129,6 +141,29 @@
     <div id="conversaciones"></div>
     <p class="nota">Demostración preparada para CDS Diagnóstico. La IA usa la lista de precios publicada en cdsdiagnostico.cl (23-11-2026). No se conecta al sistema de agenda de CDS: cada paciente que pide hora queda aquí para que el equipo lo llame.</p>
   </section>
+  <aside class="saber">
+    <h2>🧠 Lo que la IA ya sabe de CDS</h2>
+    <p class="sub">Sacado de cdsdiagnostico.cl el 23 de noviembre. Contesta solo con esto: lo que no sabe, se lo pasa a su equipo.</p>
+    <div class="stats">
+      <div class="stat"><b>480</b><span>exámenes con precio Fonasa y particular</span></div>
+      <div class="stat"><b>3</b><span>sedes, con lo que se hace en cada una</span></div>
+      <div class="stat"><b>9</b><span>preparaciones: ayuno, contraste, sedación</span></div>
+      <div class="stat"><b>24/7</b><span>contesta de noche, fines de semana y feriados</span></div>
+    </div>
+    <h4>Sus sedes</h4>
+    <div class="sede"><b>Moneda 1040</b> · todos los exámenes<br>L-V 7:30 a 17:00 · sáb 7:30 a 12:00. Laboratorio, rayos, electro y densitometría por orden de llegada.</div>
+    <div class="sede"><b>Mall Arauco Estación</b> · local D057<br>Laboratorio, electrocardiograma, Holter y ecografías. 7:30 a 17:00.</div>
+    <div class="sede"><b>Paseo Phillips 16</b> · piso 6<br>Toma de muestras.</div>
+    <h4>Siempre le recuerda al paciente</h4>
+    <ul><li>Traer la orden médica y el carnet.</li><li>La preparación de su examen.</li><li>Que los resultados se retiran en Moneda, piso 14.</li></ul>
+    <h4>Pruebe preguntándole</h4>
+    <div class="pruebe">
+      <button onclick="probar(this)">¿Cuánto sale una resonancia de rodilla con Fonasa?</button>
+      <button onclick="probar(this)">¿Tengo que ir en ayunas al perfil lipídico?</button>
+      <button onclick="probar(this)">¿En el Mall Arauco hacen ecografías?</button>
+      <button onclick="probar(this)">Quiero hora para una ecografía abdominal</button>
+    </div>
+  </aside>
 </main>
 <script type="module">
 import { Conversation } from "./elevenlabs-client.mjs";
@@ -147,21 +182,27 @@ const herramientas = (c) => ({ registrar_solicitud: (p) => { c.solicitud = p; gu
 // ── Voces ──
 const VOCES = { cristina: { id: "CaJslL1xziwefCeTNzHv", genero: "mujer" }, marco: { id: "OFrdGXwCzoE56a9sp1fk", genero: "hombre" } };
 let voz = "cristina";
-window.elegirVoz = (v) => { if (llamada) return; voz = v; $("v-cristina").classList.toggle("activo", v === "cristina"); $("v-marco").classList.toggle("activo", v === "marco"); };
+window.elegirVoz = (v) => { if (llamada || conectando) return; voz = v; $("v-cristina").classList.toggle("activo", v === "cristina"); $("v-marco").classList.toggle("activo", v === "marco"); };
 
 // ── Llamada de voz ──
-let llamada = null, convLlamada = null;
+let llamada = null, convLlamada = null, conectando = false;
+function bloquear(si) { $("boton-llamar").disabled = si; $("v-cristina").disabled = si || !!llamada; $("v-marco").disabled = si || !!llamada; }
 window.alternarLlamada = async () => {
+  if (conectando) return;
   if (llamada) { await llamada.endSession(); return; }
-  convLlamada = nuevaConv("llamada"); $("subtitulos").innerHTML = "";
-  $("estado-llamada").textContent = "Conectando…";
+  conectando = true; bloquear(true);
+  let vencida = false;
+  // Si en 20 s no conecta (aviso del micrófono sin contestar, navegador sin micrófono), se suelta el botón para reintentar.
+  const tope = setTimeout(() => { vencida = true; conectando = false; bloquear(false); $("estado-llamada").textContent = "No se pudo conectar. Revise el permiso del micrófono e intente de nuevo."; }, 20000);
   try {
-    llamada = await Conversation.startSession({
+    convLlamada = nuevaConv("llamada"); $("subtitulos").innerHTML = "";
+    $("estado-llamada").textContent = "Conectando… si le pide permiso, permita el micrófono";
+    const sesion = await Conversation.startSession({
       agentId: AGENTE, connectionType: "webrtc", dynamicVariables: { canal: "llamada", genero: VOCES[voz].genero },
       overrides: { tts: { voiceId: VOCES[voz].id } },
       clientTools: herramientas(convLlamada),
       onConnect: () => { $("estado-llamada").textContent = "En llamada"; $("boton-llamar").classList.add("cortar"); },
-      onDisconnect: () => { llamada = null; $("estado-llamada").textContent = "Llamada terminada"; $("boton-llamar").classList.remove("cortar"); $("llamada").classList.remove("hablando"); },
+      onDisconnect: () => { llamada = null; bloquear(false); $("estado-llamada").textContent = "Llamada terminada"; $("boton-llamar").classList.remove("cortar"); $("llamada").classList.remove("hablando"); },
       onModeChange: ({ mode }) => { $("llamada").classList.toggle("hablando", mode === "speaking"); $("estado-llamada").textContent = mode === "speaking" ? "Hablando…" : "Escuchando…"; },
       onMessage: ({ source, message }) => {
         agregarTurno(convLlamada, source === "ai" ? "ia" : "yo", message);
@@ -169,14 +210,26 @@ window.alternarLlamada = async () => {
       },
       onError: (e) => { $("estado-llamada").textContent = "No se pudo conectar: " + e; },
     });
-  } catch (e) { $("estado-llamada").textContent = "Necesito permiso para usar el micrófono"; llamada = null; }
+    if (vencida) { await sesion.endSession(); return; }   // llegó tarde: se corta para que no queden dos
+    llamada = sesion;
+  } catch (e) {
+    llamada = null;
+    if (!vencida) $("estado-llamada").textContent = /permission|notallowed|denied/i.test(String(e && (e.name || e.message || e))) ? "Necesito permiso para usar el micrófono" : "No se pudo conectar. Intente de nuevo.";
+  } finally {
+    clearTimeout(tope);
+    if (!vencida) { conectando = false; bloquear(false); }
+  }
 };
 
 // ── WhatsApp (texto) ──
-let wa = null, convWa = null, colaWa = [];
+let wa = null, convWa = null, colaWa = [], abriendoWa = null;
 function burbuja(quien, texto) { const d = document.createElement("div"); d.className = "burbuja " + quien; d.textContent = texto; $("wa-chat").appendChild(d); $("wa-chat").scrollTop = 1e9; }
-async function abrirWa() {
-  if (wa) return;
+function abrirWa() {
+  if (wa) return Promise.resolve();
+  if (!abriendoWa) abriendoWa = abrirWaDeVerdad().finally(() => { abriendoWa = null; });
+  return abriendoWa;
+}
+async function abrirWaDeVerdad() {
   convWa = nuevaConv("whatsapp"); $("wa-estado").textContent = "conectando…";
   wa = await Conversation.startSession({
     agentId: AGENTE, textOnly: true, dynamicVariables: { canal: "whatsapp", genero: "mujer" }, clientTools: herramientas(convWa),
@@ -195,6 +248,9 @@ window.enviarWa = async (ev) => {
   wa.sendUserMessage(t);
 };
 
+// ── Preguntas de ejemplo ──
+window.probar = (b) => { const t = b.textContent; if (llamada || conectando) return; modo("wa"); vista("telefono"); $("wa-texto").value = t; enviarWa({ preventDefault() {} }); };
+
 // ── Vistas ──
 window.modo = (m) => { if (m === "wa" && !wa) abrirWa().catch(() => {}); $("llamada").style.display = m === "llamada" ? "flex" : "none"; $("wa").style.display = m === "wa" ? "flex" : "none"; $("m-llamada").classList.toggle("activo", m === "llamada"); $("m-wa").classList.toggle("activo", m === "wa"); };
 window.vista = (v) => { document.body.dataset.vista = v; $("p-tel").classList.toggle("activa", v === "telefono"); $("p-panel").classList.toggle("activa", v === "panel"); if (v === "panel") $("badge").textContent = ""; };
@@ -206,7 +262,7 @@ window.verT = (id) => { abiertos.has(id) ? abiertos.delete(id) : abiertos.add(id
 // ── Panel ──
 const hora = (ms) => new Date(ms).toLocaleString("es-CL", { weekday: "short", hour: "2-digit", minute: "2-digit" });
 const telBonito = (t) => { const d = String(t || "").replace(/\D/g, "").replace(/^56/, ""); return d.length === 9 ? `${d[0]} ${d.slice(1,5)} ${d.slice(5)}` : (t || ""); };
-const etiqueta = (c) => `<span class="canal ${c.canal}">${c.canal === "llamada" ? "📞 Llamada" : "💬 WhatsApp"}</span>`;
+const etiqueta = (c) => `<span class="canal ${c.canal === "llamada" ? "c-llamada" : c.canal}">${c.canal === "llamada" ? "📞 Llamada" : "💬 WhatsApp"}</span>`;
 const trans = (c) => `<div class="transcripcion" style="display:${abiertos.has(c.id) ? "block" : "none"}">` + c.turnos.map(t => `<p class="${t.q}"><b>${t.q === "ia" ? "IA" : "Paciente"}:</b> ${esc(t.t)}</p>`).join("") + `</div>`;
 function pintar() {
   const cs = datos.convs.filter(c => c.turnos.some(t => t.q === "yo"));
