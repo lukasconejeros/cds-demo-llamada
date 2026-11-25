@@ -182,6 +182,10 @@ const herramientas = (c) => ({ registrar_solicitud: (p) => { c.solicitud = p; gu
 // ── Voces ──
 const VOCES = { cristina: { id: "CaJslL1xziwefCeTNzHv", genero: "mujer" }, marco: { id: "OFrdGXwCzoE56a9sp1fk", genero: "hombre" } };
 let voz = "cristina";
+// Por defecto el audio va por websocket (TCP): no se pierden pedazos de palabras si la red tiembla
+// (24-11: con WebRTC se perdió «particular» al final de una frase, aunque la grabación del servidor lo tenía).
+// ?conexion=webrtc vuelve a la conexión anterior.
+const CONEXION = new URLSearchParams(location.search).get("conexion") === "webrtc" ? "webrtc" : "websocket";
 window.elegirVoz = (v) => { if (llamada || conectando) return; voz = v; $("v-cristina").classList.toggle("activo", v === "cristina"); $("v-marco").classList.toggle("activo", v === "marco"); };
 
 // ── Llamada de voz ──
@@ -198,7 +202,7 @@ window.alternarLlamada = async () => {
     convLlamada = nuevaConv("llamada"); $("subtitulos").innerHTML = "";
     $("estado-llamada").textContent = "Conectando… si le pide permiso, permita el micrófono";
     const sesion = await Conversation.startSession({
-      agentId: AGENTE, connectionType: "webrtc", dynamicVariables: { canal: "llamada", genero: VOCES[voz].genero },
+      agentId: AGENTE, connectionType: CONEXION, dynamicVariables: { canal: "llamada", genero: VOCES[voz].genero },
       overrides: { tts: { voiceId: VOCES[voz].id } },
       clientTools: herramientas(convLlamada),
       onConnect: () => { $("estado-llamada").textContent = "En llamada"; $("boton-llamar").classList.add("cortar"); },
