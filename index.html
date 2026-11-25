@@ -36,6 +36,7 @@
   @keyframes onda { 50% { height:36px; } }
   .subtitulos { flex:1; width:100%; overflow-y:auto; font-size:14px; line-height:1.45; padding:6px 4px; min-height:0; }
   .subtitulos p { margin:6px 0; } .subtitulos .ia { color:#bfe6ff; } .subtitulos .yo { color:#fff; text-align:right; }
+  .voces { display:flex; gap:6px; margin:4px 0 2px; } .voces button { border:1px solid #4a535a; background:transparent; color:#cfd8df; border-radius:999px; padding:5px 12px; font-size:13px; cursor:pointer; } .voces button.activo { background:#fff; color:#111; border-color:#fff; }
   .boton-llamar { width:72px; height:72px; border-radius:50%; border:0; font-size:30px; cursor:pointer; background:var(--wa2); color:#fff; margin-top:10px; }
   .boton-llamar.cortar { background:#e5484d; transform:rotate(135deg); }
   /* whatsapp */
@@ -100,6 +101,7 @@
         <div class="llamada" id="llamada">
           <div class="avatar"></div>
           <h3>CDS Diagnóstico</h3>
+          <div class="voces"><button id="v-cristina" class="activo" onclick="elegirVoz('cristina')">Voz Cristina</button><button id="v-marco" onclick="elegirVoz('marco')">Voz Marco</button></div>
           <div class="estado" id="estado-llamada">Toque el botón verde para llamar</div>
           <div class="onda"><i></i><i></i><i></i><i></i><i></i></div>
           <div class="subtitulos" id="subtitulos"></div>
@@ -142,6 +144,11 @@ function nuevaConv(canal) { const c = { id: Date.now() + "-" + canal, canal, ini
 function agregarTurno(c, quien, texto) { if (!texto) return; c.turnos.push({ q: quien, t: texto }); guardar(); pintar(); }
 const herramientas = (c) => ({ registrar_solicitud: (p) => { c.solicitud = p; guardar(); pintar(); avisarPanel(); return "Solicitud registrada en el panel del equipo."; } });
 
+// ── Voces ──
+const VOCES = { cristina: { id: "CaJslL1xziwefCeTNzHv", genero: "mujer" }, marco: { id: "OFrdGXwCzoE56a9sp1fk", genero: "hombre" } };
+let voz = "cristina";
+window.elegirVoz = (v) => { if (llamada) return; voz = v; $("v-cristina").classList.toggle("activo", v === "cristina"); $("v-marco").classList.toggle("activo", v === "marco"); };
+
 // ── Llamada de voz ──
 let llamada = null, convLlamada = null;
 window.alternarLlamada = async () => {
@@ -150,7 +157,8 @@ window.alternarLlamada = async () => {
   $("estado-llamada").textContent = "Conectando…";
   try {
     llamada = await Conversation.startSession({
-      agentId: AGENTE, connectionType: "webrtc", dynamicVariables: { canal: "llamada" },
+      agentId: AGENTE, connectionType: "webrtc", dynamicVariables: { canal: "llamada", genero: VOCES[voz].genero },
+      overrides: { tts: { voiceId: VOCES[voz].id } },
       clientTools: herramientas(convLlamada),
       onConnect: () => { $("estado-llamada").textContent = "En llamada"; $("boton-llamar").classList.add("cortar"); },
       onDisconnect: () => { llamada = null; $("estado-llamada").textContent = "Llamada terminada"; $("boton-llamar").classList.remove("cortar"); $("llamada").classList.remove("hablando"); },
@@ -171,7 +179,7 @@ async function abrirWa() {
   if (wa) return;
   convWa = nuevaConv("whatsapp"); $("wa-estado").textContent = "conectando…";
   wa = await Conversation.startSession({
-    agentId: AGENTE, textOnly: true, dynamicVariables: { canal: "whatsapp" }, clientTools: herramientas(convWa),
+    agentId: AGENTE, textOnly: true, dynamicVariables: { canal: "whatsapp", genero: "mujer" }, clientTools: herramientas(convWa),
     onConnect: () => { $("wa-estado").textContent = "en línea"; },
     onDisconnect: () => { wa = null; $("wa-estado").textContent = "en línea"; },
     onMessage: ({ source, message }) => {
