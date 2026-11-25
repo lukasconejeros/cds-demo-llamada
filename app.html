@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CDS Diagnóstico · Misiones de hoy · Waly</title>
+<style>
+  :root{--tinta:#1d2730;--suave:#5f6d78;--azul:#2f6f9a;--verde:#1f8a5b;--verde-s:#e6f4ec;--ambar:#b7791f;--ambar-s:#fdf3e1;--rojo:#c0392b;--rojo-s:#fdecea;--gris:#f3f5f7;--borde:#dde3e8}
+  *{box-sizing:border-box} html,body{overflow-x:hidden}
+  body{margin:0;font-family:"Segoe UI",system-ui,sans-serif;background:var(--gris);color:var(--tinta);font-size:15px;line-height:1.45}
+  header{background:#1f262c;display:flex;align-items:center;justify-content:space-between;gap:10px}
+  header img{display:block;height:64px;max-width:55vw;object-fit:cover;object-position:left}
+  header .der{color:#cfe6f5;font-size:14px;padding:0 20px;text-align:right} header .der b{color:#fff;font-size:17px}
+  header a{color:#8fd3ff}
+  main{max-width:1180px;margin:0 auto;padding:22px 18px 60px}
+  .titulo{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:12px;margin-bottom:14px}
+  h1{margin:0;font-size:26px} .sub{color:var(--suave);font-size:14px;margin:2px 0 0}
+  .quien{background:#fff;border:1px solid var(--borde);border-radius:12px;padding:8px 12px;font-size:14px}
+  .quien select{font-size:15px;padding:4px 6px;border-radius:8px;border:1px solid var(--borde)}
+  .numeros{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:8px 0 22px}
+  .num{background:#fff;border:1px solid var(--borde);border-radius:14px;padding:14px 16px}
+  .num b{display:block;font-size:30px;line-height:1.1} .num span{color:var(--suave);font-size:13.5px}
+  .cols{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:18px}
+  .mision{background:#fff;border:1px solid var(--borde);border-radius:16px;padding:16px 18px;margin-bottom:16px}
+  .mision-top{display:flex;justify-content:space-between;align-items:start;gap:10px}
+  .mision h2{margin:0;font-size:19px} .mision .por{color:var(--suave);font-size:13.5px;margin:2px 0 10px}
+  .barra{height:8px;background:var(--gris);border-radius:8px;overflow:hidden;margin:6px 0 12px} .barra i{display:block;height:100%;background:var(--verde);border-radius:8px;transition:width .3s}
+  .cuenta{font-weight:700;white-space:nowrap;font-size:15px}
+  .tarjeta{border:1px solid var(--borde);border-radius:12px;padding:12px 14px;margin:10px 0;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .tarjeta.hecha{opacity:.55;background:#fafbfc}
+  .tarjeta.nueva{border:2px solid var(--verde);background:var(--verde-s)}
+  .nombre{font-weight:700;font-size:16px} .meta{color:var(--suave);font-size:13.5px}
+  .chips{margin-top:6px;display:flex;flex-wrap:wrap;gap:6px}
+  .chip{background:var(--gris);border-radius:20px;padding:2px 10px;font-size:12.5px}
+  .chip.verde{background:var(--verde-s);color:var(--verde);font-weight:600} .chip.rojo{background:var(--rojo-s);color:var(--rojo);font-weight:600}
+  .acciones{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  button{font:inherit;cursor:pointer;border-radius:10px;border:1px solid var(--borde);background:#fff;padding:8px 12px;font-size:14px}
+  .b-ok{background:var(--verde);color:#fff;border-color:var(--verde);font-weight:600}
+  .b-guion{color:var(--azul);font-weight:600}
+  .estado{font-weight:700;color:var(--verde);font-size:14px}
+  .equipo{background:#fff;border:1px solid var(--borde);border-radius:16px;padding:16px 18px;position:sticky;top:12px}
+  .equipo h2{margin:0 0 4px;font-size:19px}
+  .fila{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--borde)}
+  .fila .n{font-weight:700} .fila small{display:block;color:var(--suave);font-size:12.5px;font-weight:400}
+  .fila .big{font-size:22px;font-weight:800;text-align:right} .fila .lbl{font-size:11.5px;color:var(--suave);text-align:right;display:block;font-weight:400}
+  .medalla{font-size:20px}
+  .nota{font-size:12.5px;color:var(--suave);margin-top:10px}
+  .fondo{position:fixed;inset:0;background:rgba(20,30,40,.5);display:none;align-items:center;justify-content:center;padding:16px;z-index:9}
+  .fondo.abierto{display:flex}
+  .modal{background:#fff;border-radius:16px;max-width:620px;width:100%;max-height:90vh;overflow:auto;padding:20px 22px}
+  .modal h3{margin:0 0 4px;font-size:20px} .modal h4{margin:16px 0 6px;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--azul)}
+  .dilo{background:var(--gris);border-left:4px solid var(--azul);border-radius:8px;padding:10px 12px;font-size:15.5px;white-space:pre-line}
+  .wa{background:#e7ffdb;border-left-color:#25d366}
+  .cerrar{float:right}
+  .demo-aviso{background:var(--ambar-s);border:1px solid #f0d9a8;border-radius:12px;padding:10px 14px;font-size:14px;margin-bottom:14px}
+  @media (max-width:900px){.cols{grid-template-columns:minmax(0,1fr)}.numeros{grid-template-columns:repeat(2,minmax(0,1fr))}.equipo{position:static}header img{height:48px}header .der{font-size:12px;padding:0 10px}.mision-top{flex-wrap:wrap}main{padding:14px 10px 50px}}
+</style></head><body>
+<header><img src="https://www.cdsdiagnostico.cl/images/header.jpg" alt="CDS Diagnóstico"><div class="der">funciona con <b>Waly</b><br><a href="./">← Probar la llamada y el WhatsApp</a></div></header>
+<main>
+  <div class="demo-aviso">Esta es una <b>demo</b> con pacientes de ejemplo. Si llama o escribe en la <a href="./">página de prueba</a> y pide una hora, su solicitud aparece arriba en la misión 1.</div>
+  <div class="titulo">
+    <div><h1>Misiones de hoy</h1><p class="sub" id="fecha"></p></div>
+    <div class="quien">Estoy trabajando como <select id="yo"><option>Paula</option><option>Javiera</option><option>Carla</option></select></div>
+  </div>
+
+  <div class="numeros">
+    <div class="num"><b>142</b><span>llamadas atendidas por la IA hoy, ninguna sin contestar</span></div>
+    <div class="num"><b>88</b><span>conversaciones por WhatsApp hoy</span></div>
+    <div class="num"><b>71 %</b><span>resueltas por la IA sin pasar a nadie</span></div>
+    <div class="num"><b>4,6</b><span>nota promedio que le ponen los pacientes (de 1 a 5)</span></div>
+  </div>
+
+  <div class="cols">
+    <div id="misiones"></div>
+    <aside class="equipo">
+      <h2>🏆 El equipo hoy</h2>
+      <p class="sub">Cada misión cumplida suma. Se reinicia cada mañana.</p>
+      <div id="ranking"></div>
+      <p class="nota">Ejemplo de lo que mide: cuántas misiones cerró cada una, cuántos pacientes terminaron agendados y cuánto se demoró en llamar desde que la IA dejó la solicitud.</p>
+    </aside>
+  </div>
+</main>
+
+<div class="fondo" id="fondo" onclick="if(event.target===this)cerrar()"><div class="modal" id="modal"></div></div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+$("fecha").textContent = new Date().toLocaleDateString("es-CL", { weekday: "long", day: "numeric", month: "long" }) + " · lo que el equipo tiene que hacer hoy, en orden";
+
+const GUION = {
+  agendar: (p) => ({
+    titulo: "Llamar para dar la hora",
+    por: "La IA ya le resolvió las dudas y le tomó los datos. Usted solo le ofrece la hora y la deja anotada en su sistema.",
+    llamada: `Hola, ¿hablo con ${p.nombre}? Le llamo de CDS Diagnóstico, usted habló con nuestra asistente por ${p.examen}.\nTengo hora el ${p.oferta}, ¿se la dejo reservada?\n\nSi dice que sí: Perfecto, quedó para el ${p.oferta}. ${p.prep} Traiga su orden médica y su carnet.\nSi no puede: ¿Qué día le acomoda más? (anotar y ofrecer la siguiente).`,
+    wa: `Hola ${p.nombre}, le escribe ${yo()} de CDS Diagnóstico. Lo llamamos por la hora para ${p.examen} que pidió. Tenemos el ${p.oferta}, ¿se la dejamos reservada? Me responde por aquí y queda lista.`,
+    sino: "Si no contesta, mande el WhatsApp de abajo y vuelva a llamar en 2 horas. Al tercer intento la misión queda cerrada.",
+  }),
+  cotizo: (p) => ({
+    titulo: "WhatsApp a quien preguntó el precio y no volvió",
+    por: "Preguntó por un examen hace 1 a 3 días y no agendó. Un mensaje a tiempo recupera a muchos.",
+    wa: `Hola ${p.nombre}, le escribe ${yo()} de CDS Diagnóstico. Hace unos días nos consultó por ${p.examen}, que con ${p.prevision} sale ${p.precio}. ¿Le busco una hora esta semana? Si prefiere, también le podemos llamar.`,
+    llamada: `Si responde que sí: llamar con el guion de la misión 1 y ofrecer la hora.\nSi dice que ya se lo hizo en otro lado: Gracias por avisar, que le vaya muy bien. (cerrar la misión)`,
+    sino: "Un solo mensaje. Si no responde en 2 días, no se insiste.",
+  }),
+  resena: (p) => ({
+    titulo: "Pedir la reseña en Google",
+    por: "Este paciente le puso 5 a la atención. Es el mejor momento para pedirle que lo diga en Google.",
+    wa: `Hola ${p.nombre}, le escribe ${yo()} de CDS Diagnóstico. Gracias por su nota de hoy, nos alegra mucho que lo hayan atendido bien. ¿Nos ayudaría dejando su opinión en Google? Le toma 30 segundos 👇\n(link de reseñas de la sede ${p.sede})`,
+    sino: "Solo a quienes pusieron 5. Así la nota de Google sube con pacientes reales y contentos.",
+  }),
+  rescate: (p) => ({
+    titulo: "Llamar a quien quedó molesto",
+    por: `Le puso ${p.notaBaja} a la atención. Llamarlo hoy, antes de que lo escriba en Google.`,
+    llamada: `Hola, ¿hablo con ${p.nombre}? Le llamo de CDS Diagnóstico. Vimos que su experiencia de hoy no fue buena y quiero saber qué pasó para solucionarlo.\n\n(Escuchar sin interrumpir. Anotar el problema. Ofrecer una solución concreta: una hora preferente, enviar el resultado, o que lo llame la jefatura.)\n\nGracias por decírnoslo, con esto mejoramos.`,
+    sino: "La misma persona que llama anota qué pasó. Eso llega al informe del mes para corregirlo de raíz.",
+  }),
+};
+
+const EJEMPLOS = [
+  { id: "a1", m: 1, tipo: "agendar", nombre: "Marta Rojas", examen: "una mamografía", prevision: "Fonasa", sede: "Moneda", cuando: "hace 12 min", canal: "📞 Llamada 8:42", oferta: "jueves a las 10:30 en Moneda", prep: "Venga sin desodorante ni talco.", chips: ["Mamografía", "Moneda", "Fonasa", "jueves en la mañana"] },
+  { id: "a2", m: 1, tipo: "agendar", nombre: "Luis Fuentes", examen: "un Holter de 24 horas", prevision: "Isapre", sede: "Mall Arauco", cuando: "hace 35 min", canal: "💬 WhatsApp 8:19", oferta: "viernes a las 9:00 en Mall Arauco", prep: "Venga con ropa cómoda y la piel del pecho limpia, sin cremas.", chips: ["Holter 24 h", "Mall Arauco", "Isapre", "viernes"] },
+  { id: "a3", m: 1, tipo: "agendar", nombre: "Carolina Pérez", examen: "una densitometría", prevision: "Fonasa", sede: "Moneda", cuando: "anoche 23:10", canal: "📞 Llamada fuera de horario", oferta: "lunes a las 11:00 en Moneda", prep: "No tome suplementos de calcio el día del examen.", chips: ["Densitometría", "Moneda", "Fonasa", "llamó de noche"] },
+  { id: "c1", m: 2, tipo: "cotizo", nombre: "Jorge Muñoz", examen: "una mamografía", prevision: "Fonasa", precio: "$11.750", cuando: "preguntó ayer", canal: "💬 WhatsApp", chips: ["Mamografía", "$11.750 Fonasa", "no agendó"] },
+  { id: "c2", m: 2, tipo: "cotizo", nombre: "Ana Soto", examen: "un Holter de presión", prevision: "Fonasa", precio: "$12.490", cuando: "preguntó hace 2 días", canal: "📞 Llamada", chips: ["Holter de presión", "$12.490 Fonasa", "no agendó"] },
+  { id: "c3", m: 2, tipo: "cotizo", nombre: "Pedro Díaz", examen: "un perfil lipídico", prevision: "particular", precio: "$7.000", cuando: "preguntó ayer", canal: "💬 WhatsApp", chips: ["Perfil lipídico", "$7.000 particular", "no agendó"] },
+  { id: "r1", m: 3, tipo: "resena", nombre: "Sofía Vargas", sede: "Moneda", cuando: "se atendió hoy 8:00", canal: "Nota 5 ⭐", chips: ["Nota 5", "Moneda"], verde: true },
+  { id: "r2", m: 3, tipo: "resena", nombre: "Ricardo Lagos", sede: "Paseo Phillips", cuando: "se atendió ayer", canal: "Nota 5 ⭐", chips: ["Nota 5", "Paseo Phillips"], verde: true },
+  { id: "r3", m: 3, tipo: "rescate", nombre: "Elena Torres", sede: "Moneda", notaBaja: "2", cuando: "llamó hoy 9:05", canal: "Nota 2", chips: ["Nota 2", "esperó mucho en la fila"], rojo: true },
+];
+
+const MISIONES = [
+  { m: 1, icono: "📞", titulo: "Quieren hora: llamarlos", por: "La IA les resolvió todo y les tomó los datos. Su software no se conecta, así que la hora la da una persona. Meta: todos llamados antes de las 12:00." },
+  { m: 2, icono: "💬", titulo: "Preguntaron el precio y no agendaron", por: "Un WhatsApp de seguimiento, listo para copiar. Meta: los de ayer, hoy." },
+  { m: 3, icono: "⭐", titulo: "Subir la nota de Google", por: "A quien le puso 5 a la atención se le pide la reseña. A quien le puso 1 o 2 se le llama hoy mismo." },
+];
+
+const DEMO_KEY = "cds-demo-v1", HECHAS_KEY = "cds-app-hechas-v1";
+let hechas = JSON.parse(localStorage.getItem(HECHAS_KEY) || "{}");
+const yo = () => $("yo").value;
+
+function deLaDemo() {
+  try {
+    const d = JSON.parse(localStorage.getItem(DEMO_KEY) || "null");
+    return (d?.convs || []).filter((c) => c.solicitud).map((c) => {
+      const s = c.solicitud, min = Math.max(0, Math.round((Date.now() - c.inicio) / 60000));
+      return { id: "d-" + c.id, m: 1, tipo: "agendar", nueva: true, nombre: s.nombre || "Paciente", examen: s.examen || s.motivo || "su examen",
+        prevision: s.prevision || "", sede: s.sede || "", cuando: min < 1 ? "recién" : `hace ${min} min`,
+        canal: (c.canal === "llamada" ? "📞 Llamada" : "💬 WhatsApp") + " · desde la demo", oferta: "(la hora que tenga disponible)",
+        prep: "", chips: [s.examen, s.sede, s.prevision, s.dia_preferido, s.motivo].filter(Boolean) };
+    });
+  } catch { return []; }
+}
+
+function todas() { return [...deLaDemo(), ...EJEMPLOS]; }
+
+function pintar() {
+  const lista = todas();
+  $("misiones").innerHTML = MISIONES.map((M) => {
+    const items = lista.filter((x) => x.m === M.m), ok = items.filter((x) => hechas[x.id]).length;
+    return `<section class="mision"><div class="mision-top"><div><h2>${M.icono} Misión ${M.m} · ${esc(M.titulo)}</h2><p class="por">${esc(M.por)}</p></div><div class="cuenta">${ok} de ${items.length}</div></div>
+      <div class="barra"><i style="width:${items.length ? (ok / items.length) * 100 : 0}%"></i></div>
+      ${items.map((x) => `<div class="tarjeta ${hechas[x.id] ? "hecha" : ""} ${x.nueva ? "nueva" : ""}">
+        <div><div class="nombre">${esc(x.nombre)}${x.nueva ? ' <span class="chip verde">recién llegó</span>' : ""}</div>
+        <div class="meta">${esc(x.canal)} · ${esc(x.cuando)}</div>
+        <div class="chips">${x.chips.map((c) => `<span class="chip ${x.verde ? "verde" : x.rojo ? "rojo" : ""}">${esc(c)}</span>`).join("")}</div></div>
+        <div class="acciones">${hechas[x.id] ? `<span class="estado">✓ ${esc(hechas[x.id])}</span>` : `<button class="b-guion" onclick="verGuion('${x.id}')">Qué decirle</button><button class="b-ok" onclick="marcar('${x.id}')">Listo</button>`}</div>
+      </div>`).join("")}
+    </section>`;
+  }).join("");
+
+  const base = { Paula: { m: 9, ag: 6, t: "6 min" }, Javiera: { m: 7, ag: 4, t: "11 min" }, Carla: { m: 5, ag: 3, t: "18 min" } };
+  for (const [id, quien] of Object.entries(hechas)) { if (base[quien]) { base[quien].m++; const x = todas().find((y) => y.id === id); if (x && x.tipo === "agendar") base[quien].ag++; } }
+  const orden = Object.entries(base).sort((a, b) => b[1].m - a[1].m);
+  $("ranking").innerHTML = orden.map(([n, v], i) => `<div class="fila"><div class="n"><span class="medalla">${["🥇", "🥈", "🥉"][i]}</span> ${n}<small>llama en ${v.t} promedio</small></div>
+    <div><span class="big">${v.m}</span><span class="lbl">misiones</span></div><div><span class="big">${v.ag}</span><span class="lbl">agendados</span></div></div>`).join("");
+}
+
+function verGuion(id) {
+  const x = todas().find((y) => y.id === id), g = GUION[x.tipo](x);
+  $("modal").innerHTML = `<button class="cerrar" onclick="cerrar()">Cerrar</button><h3>${esc(g.titulo)}</h3><p class="sub">${esc(x.nombre)} · ${esc(g.por)}</p>
+    ${g.llamada ? `<h4>📞 Qué decir en la llamada</h4><div class="dilo">${esc(g.llamada)}</div>` : ""}
+    ${g.wa ? `<h4>💬 WhatsApp listo para mandar</h4><div class="dilo wa">${esc(g.wa)}</div><p><button onclick="copiar(this)">Copiar el WhatsApp</button></p>` : ""}
+    <h4>Si no resulta</h4><div class="dilo">${esc(g.sino)}</div>
+    <p><button class="b-ok" onclick="marcar('${id}');cerrar()">Listo, misión cumplida</button></p>`;
+  $("modal").dataset.wa = g.wa || "";
+  $("fondo").classList.add("abierto");
+}
+function copiar(b) { navigator.clipboard?.writeText($("modal").dataset.wa); b.textContent = "✓ Copiado"; }
+function cerrar() { $("fondo").classList.remove("abierto"); }
+function marcar(id) { hechas[id] = yo(); localStorage.setItem(HECHAS_KEY, JSON.stringify(hechas)); pintar(); }
+$("yo").onchange = pintar;
+window.addEventListener("storage", pintar);
+setInterval(pintar, 15000);
+pintar();
+</script>
+</body></html>
